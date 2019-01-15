@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import {
     Tooltip, 
@@ -19,8 +18,6 @@ import {
     TextField, 
     Button} from "@material-ui/core";
     import DeleteIcon from "@material-ui/icons/Delete";
-    import FilterListIcon from "@material-ui/icons/FilterList";
-    import { lighten } from "@material-ui/core/styles/colorManipulator";
 
 function createData(
     id,
@@ -113,12 +110,13 @@ class EnhancedTableHead extends React.Component {
                         return (
                             <TableCell
                                 key={row.id}
-                                align={row.numeric ? "right" : "left"}
+                                align="center"
                                 padding={row.disablePadding ? "none" : "default"}
                                 sortDirection={orderBy === row.id ? order : false}
                             >
                                 <Tooltip
                                     title="Sort"
+                                    style={{paddingLeft: '25px'}}
                                     placement={row.numeric ? "bottom-end" : "bottom-start"}
                                     enterDelay={300}
                                 >
@@ -149,87 +147,50 @@ EnhancedTableHead.propTypes = {
 };
 
 const toolbarStyles = theme => ({
-    root: {
-        paddingRight: theme.spacing.unit
-    },
-    highlight:
-    theme.palette.type === "light"
-    ? {
-        color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85)
-    } : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark
-    },
-    spacer: {
-        flex: "1 1 100%"
-    },
-    actions: {
-        color: theme.palette.text.secondary
-    },
-    title: {
-        flex: "0 0 auto"
-    },
 
-    textField: {
-        margin: theme.spacing.unit * 3
-    }
 });
 
 let EnhancedTableToolbar = props => {
-    const { numSelected, classes } = props;
+    const { numSelected } = props;
 
     return (
         <React.Fragment>
         <Toolbar
-            className={classNames(classes.root, {
-            [classes.highlight]: numSelected > 0
-            })}
+            style={{paddingRight: '30px'}}
         >
-            <div className={classes.title}>
             {numSelected > 0 ? (
-                <Typography color="inherit" variant="subtitle1">
-                {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography variant="h6" id="tableTitle">
-                    Task list
-                </Typography>
-            )}
-            </div>
-            <div className={classes.spacer}></div>
-
-            <TextField
-                id="outlined-search"
-                label="Search field"
-                type="search"
-                className={classes.textField}
-                variant="outlined"
-                fullWidth
-            />
-
-            <div className={classes.actions}>
-                {numSelected > 0 ? (
+                <div>
+                    <Typography color="inherit" variant="subtitle1">
+                        {numSelected} selected
+                    </Typography>
                     <Tooltip title="Delete">
                         <IconButton aria-label="Delete">
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
-                ) : (
-                    <Tooltip title="Filter list">
-                        <IconButton aria-label="Filter list">
-                            <FilterListIcon />
-                        </IconButton>
-                    </Tooltip>
-                )}
-            </div>
+                </div>
+                
+            ) : (
+                <div style={{width:"100%", display:'flex', marginTop: '25px'}}>
+                    <Typography variant="h6" id="tableTitle" style={{flex:'1 0 auto'}}> 
+                        Task list
+                    </Typography>
+                    <TextField
+                        id="outlined-search"
+                        label="Search field"
+                        type="search"
+                        style={{width: '30%'}}
+                        variant="outlined"
+                        fullWidth
+                    />
+                </div>
+            )}
         </Toolbar>
         </React.Fragment>
     );
 };
 
 EnhancedTableToolbar.propTypes = {
-    classes: PropTypes.object.isRequired,
     numSelected: PropTypes.number.isRequired
 };
 
@@ -287,6 +248,13 @@ class TaskList extends React.Component {
         page: 0,
         rowsPerPage: 5
     };
+
+    deleteTask = (current) => {
+        console.log(current)
+        let getData = this.state.data;
+        getData.splice(current,1);
+        this.setState({data: getData})
+    }
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -374,19 +342,20 @@ class TaskList extends React.Component {
                         <TableCell padding="checkbox">
                             <Checkbox checked={isSelected} />
                         </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
+                        <TableCell align="center" component="th" scope="row" padding="none">
                             {n.id}
                         </TableCell>
-                        <TableCell align="left">{n.shortDescription}</TableCell>
-                        <TableCell align="left">{n.description}</TableCell>
-                        <TableCell align="left">{n.type}</TableCell>
-                        <TableCell align="left">{n.complexity}</TableCell>
-                        <TableCell align="left">
+                        <TableCell align="center">{n.shortDescription}</TableCell>
+                        <TableCell align="center">{n.description}</TableCell>
+                        <TableCell align="center">{n.type}</TableCell>
+                        <TableCell align="center">{n.complexity}</TableCell>
+                        <TableCell align="center">
                             <Button
                                 variant="contained"
                                 color="secondary"
+                                style={{margin:'0 10px', borderRadius: '5px'}}
                                 className={classes.button}
-                                onClick={()=>alert('Delete')}
+                                onClick={() => this.deleteTask(0)}
                                 >
                                 Delete
                             </Button>
@@ -394,8 +363,7 @@ class TaskList extends React.Component {
                                 variant="contained"
                                 color="secondary"
                                 className={classes.button}
-                                onClick={()=>alert('Edit')}
-                                padding="10px"
+                                style={{margin:'0 10px', borderRadius: '5px'}}
                                 >
                                 Edit
                             </Button>

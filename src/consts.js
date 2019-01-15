@@ -1,5 +1,5 @@
 export const ROUTES = {
-    DASHBOARD: '/dashboard',
+    DASHBOARD: '/',
     TASKMANAGER: '/task-manager',
     EVENTS: '/events',
     CANDIDATES: '/candidates'

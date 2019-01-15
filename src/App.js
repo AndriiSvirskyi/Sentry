@@ -44,7 +44,7 @@ class App extends Component {
     }
     render() {
         const {location: { pathname } } = this.props
-     
+    
         return (
         <MuiThemeProvider theme={theme}>
             <Header />      
