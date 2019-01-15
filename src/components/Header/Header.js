@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import Logo from '/home/andrii/Desktop/project/Sentry/src/components/Header/GloLogo.svg'
+import Logo from 'D:/JavaScript/Sentry/src/components/Header/GloLogo.svg'
 import { withStyles, Toolbar, Typography, InputBase, AppBar} from "@material-ui/core";
-import { fade } from "@material-ui/core/styles/colorManipulator";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 
@@ -13,20 +12,26 @@ const styles = {
         position: "relative",
         borderRadius: '20px',
         width: '40%',
-        backgroundColor: fade('#fff', 0.15),
+        backgroundColor: '#616161',
         marginLeft: '15px',  
+        border: '1px solid #616161',
         '&:hover': {
             backgroundColor: '#757575',
-            border: '2px solid #ef6c00',
         },
     },
     focus: {
         backgroundColor: '#757575',
-        border: '2px solid #ef6c00'
-    }
+        border: '1px solid #ef6c00'
+    },
 }
 
 class Header extends Component {
+    constructor(props){
+        super(props)
+        this.state={
+            focus:0
+        }
+    }
     render() {
         return (
             <AppBar position="static" style={{width: "100%",marginBottom: '20px'}}>
@@ -44,11 +49,13 @@ class Header extends Component {
                         </img>
                         <Typography variant="h6" color="inherit" noWrap>Sentry</Typography>
                         
-                        <label className={this.props.classes.search}>
+                        <label className={this.state.focus > 0 ? `${this.props.classes.search} ${this.props.classes.focus}` : this.props.classes.search }>
                             <SearchIcon style={{marginLeft: '15px'}}/>
                             <InputBase
                                 placeholder="Search…"
                                 style={{marginLeft: '10px', color: 'white'}}
+                                onFocus={()=>{ this.setState({ focus:1 }) }}
+                                onBlur={()=>{ this.setState({ focus: 0 }) }}
                             />
                         </label>
                     </div>
