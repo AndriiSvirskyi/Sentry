@@ -53,4 +53,4 @@ const TabsBar = (rows) => {
         </TableHead>
     );
 }
-export default TabsBar;    
+export default TabsBar  

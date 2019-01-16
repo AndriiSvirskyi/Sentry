@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Logo from '/home/andrii/Desktop/project/Sentry/src/components/Header/GloLogo.svg'
+import Logo from 'D:/JavaScript/Sentry/src/components/Header/GloLogo.svg'
 import { withStyles, Toolbar, Typography, InputBase, AppBar} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";

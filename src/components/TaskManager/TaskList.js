@@ -1,48 +1,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import {
-    Tooltip, 
-    IconButton, 
-    Checkbox, 
     withStyles,
-    TableBody, 
     Table, 
-    TableCell, 
     TablePagination,
-    TableRow ,
-    Toolbar, 
-    Typography, 
     Paper,
-    TextField, 
 } from "@material-ui/core";
-    import DeleteIcon from "@material-ui/icons/Delete";
-    import EditIcon from "@material-ui/icons/Edit";
-    import TabsBar from '../Tools'
-function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function stableSort(array, cmp) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
-}   
-
-function getSorting(order, orderBy) {
-    return order === "desc"
-    ? (a, b) => desc(a, b, orderBy)
-    : (a, b) => -desc(a, b, orderBy);
-}
+import TableItem from '../Tools'
+import EnhancedTableToolbar from '../Tools'
+import TabsBar from '../Tools/TabsBar'
 
 const items = [{
     id: "id",
@@ -66,72 +32,6 @@ const items = [{
         label: "Complexity" 
     }];
 
-class EnhancedTableToolbar extends Component {
-    renderToolBar = (select)=>{
-        if(select){ return <div style={{
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between', 
-            width: '100%', 
-            background: '#fff3e0',
-            minHeight: '64px',
-            }}>
-            <Typography color="inherit" variant="subtitle1" style={{paddingLeft:"20px"}}>
-                {select} selected
-            </Typography>
-                {select === 1 ? (
-                <div>
-                    <Tooltip title="Edit">
-                            <IconButton aria-label="Edit">
-                                <EditIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete" >
-                            <IconButton aria-label="Delete">
-                                <DeleteIcon />
-                            </IconButton>
-                        </Tooltip>
-                </div>
-                ) : (
-                    <div>
-                        <Tooltip title="Delete" >
-                            <IconButton aria-label="Delete">
-                                <DeleteIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </div>
-                
-                )}  
-        </div>
-        }else{
-            return false
-        }
-    }
-    render(){
-        const { numSelected } = this.props;
-        return (
-            <Toolbar style={{width:'100%', padding: 0}}>
-                {numSelected ? ( 
-                    this.renderToolBar(numSelected) 
-                ) : ( <div style={{width:"100%", display:'flex', alignItems:'center',paddingTop:'8px'}}>
-                        <Typography variant="h6" id="tableTitle" style={{flex:'1 0 auto', paddingLeft: '20px'}}> 
-                            Task list
-                        </Typography>
-                        <TextField
-                            id="outlined-search"
-                            label="Search field"
-                            type="filter"
-                            style={{width: '20%', paddingRight:'20px'}}
-                            variant="outlined"
-                            fullWidth
-                        />
-                    </div>
-                )}
-            </Toolbar>
-        );
-            }
-}
-
 const styles = theme => ({
     root: {
         margin: theme.spacing.unit * 3
@@ -148,7 +48,8 @@ let data = [
         shortDescription:'Reverse number',
         description:'Write a JavaScript function that reverse a number.', 
         type:'JS',
-        complexity:'★'},
+        complexity:'★'
+    },
     {
         id:222,
         shortDescription:'Reverse number',
@@ -185,7 +86,7 @@ let data = [
     }
 ]
 
-class TaskList extends React.Component {
+class TaskList extends Component {
     state = {
         order: "asc",
         orderBy: "",
@@ -244,48 +145,19 @@ class TaskList extends React.Component {
 
         return (
         <Paper className={classes.root}>
-            <EnhancedTableToolbar numSelected={selected.length} />
+            
             <div className={classes.tableWrapper}>
-            <Table className={classes.table} aria-labelledby="tableTitle">
-                <TabsBar
-                    items ={items}
-                    numSelected={selected.length}
-                    order={order}
-                    orderBy={orderBy}
-                    onSelectAllClick={this.handleSelectAllClick}
-                    onRequestSort={this.handleRequestSort}
-                    rowCount={data.length}
-                />
-                <TableBody>
-                    {stableSort(data, getSorting(order, orderBy))
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map(item => {
-                        const isSelected = this.isSelected(item.id);
-                        return (
-                            <TableRow
-                                hover
-                                onClick={event => this.handleClick(event, item.id)}
-                                role="checkbox"
-                                aria-checked={isSelected}
-                                tabIndex={-1}
-                                key={item.id}
-                                selected={isSelected}
-                            >
-                                <TableCell padding="checkbox">
-                                    <Checkbox checked={isSelected} />
-                                </TableCell>
-                                <TableCell align="center" component="th" scope="row" padding="none">
-                                    {item.id}
-                                </TableCell>
-                                <TableCell align="center">{item.shortDescription}</TableCell>
-                                <TableCell align="center">{item.description}</TableCell>
-                                <TableCell align="center">{item.type}</TableCell>
-                                <TableCell align="center">{item.complexity}</TableCell>
-                            </TableRow>
-                        );
-                    })}
-                </TableBody>
-            </Table>
+                <Table className={classes.table} aria-labelledby="tableTitle">
+                    <TabsBar
+                       items ={items}
+                       numSelected={selected.length}
+                       order={order}
+                       orderBy={orderBy}
+                       onSelectAllClick={this.handleSelectAllClick}
+                       onRequestSort={this.handleRequestSort}
+                       rowCount={data.length}
+                    />
+                </Table>
             </div>
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
