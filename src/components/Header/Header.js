@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Logo from 'D:/JavaScript/Sentry/src/components/Header/GloLogo.svg'
+import Logo from '/home/andrii/Desktop/project/Sentry/src/components/Header/GloLogo.svg'
 import { withStyles, Toolbar, Typography, InputBase, AppBar} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
@@ -33,6 +33,7 @@ class Header extends Component {
         }
     }
     render() {
+        const { classes } = this.props
         return (
             <AppBar position="static" style={{width: "100%",marginBottom: '20px'}}>
                 <Toolbar style={{display: "flex", justifyContent: "space-between"}}>
@@ -45,11 +46,13 @@ class Header extends Component {
                                 borderRadius: '20px', 
                                 marginRight: '15px'
                             }} 
-                            src={Logo} alt='logo'>
+                            src={Logo} alt='logo'
+                            onClick={()=>this.props.history.push('/')}
+                            >
                         </img>
                         <Typography variant="h6" color="inherit" noWrap>Sentry</Typography>
                         
-                        <label className={this.state.focus > 0 ? `${this.props.classes.search} ${this.props.classes.focus}` : this.props.classes.search }>
+                        <label className={classes.search + (this.state.focus ? ' ' + classes.focus : '')}>
                             <SearchIcon style={{marginLeft: '15px'}}/>
                             <InputBase
                                 placeholder="Search…"

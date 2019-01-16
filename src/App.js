@@ -1,23 +1,10 @@
 import React, { Component } from "react";
 import { Header, TaskList, EventList, Dashboard, CandidateList} from './components'
-import {MuiThemeProvider, Tabs, Tab, AppBar,NoSsr,Typography, withStyles} from '@material-ui/core';
+import {MuiThemeProvider, Tabs, Tab, AppBar,NoSsr, withStyles} from '@material-ui/core';
 import { Route, withRouter, Switch, Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { theme } from "./glTheme";
 import { ROUTES } from './consts';
 import {compose} from 'recompose'
-
-function TabContainer(props) {
-    return (
-        <Typography component="div" style={{ padding: 8 * 3 }}>
-            {props.children}
-        </Typography>
-    );
-}
-
-TabContainer.propTypes = {
-    children: PropTypes.node.isRequired,
-};
 
 class App extends Component {
 
@@ -47,7 +34,7 @@ class App extends Component {
     
         return (
         <MuiThemeProvider theme={theme}>
-            <Header />      
+            <Header history={this.props.history}/>      
             <NoSsr>
             <div>
                 <AppBar position="static">

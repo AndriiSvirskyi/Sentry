@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import {
     Tooltip, 
@@ -8,28 +8,16 @@ import {
     TableBody, 
     Table, 
     TableCell, 
-    TableHead, 
     TablePagination,
     TableRow ,
-    TableSortLabel, 
     Toolbar, 
     Typography, 
     Paper,
     TextField, 
-    Button} from "@material-ui/core";
+} from "@material-ui/core";
     import DeleteIcon from "@material-ui/icons/Delete";
-
-function createData(
-    id,
-    shortDescription,
-    description,
-    type,
-    complexity,
-    actions
-) {
-    return { id,shortDescription ,description, type ,complexity ,actions};
-}
-
+    import EditIcon from "@material-ui/icons/Edit";
+    import TabsBar from '../Tools'
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -56,7 +44,7 @@ function getSorting(order, orderBy) {
     : (a, b) => -desc(a, b, orderBy);
 }
 
-const rows = [{
+const items = [{
     id: "id",
     disablePadding: true,
     label: "ID"
@@ -76,125 +64,73 @@ const rows = [{
         id: "complexity", 
         disablePadding: false, 
         label: "Complexity" 
-    },{ 
-        id: "action", 
-        disablePadding: false, 
-        label: "Action" 
-}];
+    }];
 
-class EnhancedTableHead extends React.Component {
-    createSortHandler = property => event => {
-        this.props.onRequestSort(event, property);
-    };
-
-    render() {
-        const {
-            onSelectAllClick,
-            order,
-            orderBy,
-            numSelected,
-            rowCount
-        } = this.props;
-
-        return (
-            <TableHead>
-                <TableRow>
-                    <TableCell padding="checkbox">
-                        <Checkbox
-                            indeterminate={numSelected > 0 && numSelected < rowCount}
-                            checked={numSelected === rowCount}
-                            onChange={onSelectAllClick}
-                        />
-                    </TableCell>
-                    {rows.map(row => {
-                        return (
-                            <TableCell
-                                key={row.id}
-                                align="center"
-                                padding={row.disablePadding ? "none" : "default"}
-                                sortDirection={orderBy === row.id ? order : false}
-                            >
-                                <Tooltip
-                                    title="Sort"
-                                    style={{paddingLeft: '25px'}}
-                                    placement={row.numeric ? "bottom-end" : "bottom-start"}
-                                    enterDelay={300}
-                                >
-                                    <TableSortLabel
-                                        active={orderBy === row.id}
-                                        direction={order}
-                                        onClick={this.createSortHandler(row.id)}
-                                    >
-                                    {row.label}
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                        );
-                    }, this)}
-                </TableRow>
-            </TableHead>
-        );
-    }
-}
-
-EnhancedTableHead.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.string.isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired
-};
-
-const toolbarStyles = theme => ({
-
-});
-
-let EnhancedTableToolbar = props => {
-    const { numSelected } = props;
-
-    return (
-        <React.Fragment>
-        <Toolbar
-            style={{paddingRight: '30px'}}
-        >
-            {numSelected > 0 ? (
+class EnhancedTableToolbar extends Component {
+    renderToolBar = (select)=>{
+        if(select){ return <div style={{
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            width: '100%', 
+            background: '#fff3e0',
+            minHeight: '64px',
+            }}>
+            <Typography color="inherit" variant="subtitle1" style={{paddingLeft:"20px"}}>
+                {select} selected
+            </Typography>
+                {select === 1 ? (
                 <div>
-                    <Typography color="inherit" variant="subtitle1">
-                        {numSelected} selected
-                    </Typography>
-                    <Tooltip title="Delete">
-                        <IconButton aria-label="Delete">
-                            <DeleteIcon />
-                        </IconButton>
-                    </Tooltip>
+                    <Tooltip title="Edit">
+                            <IconButton aria-label="Edit">
+                                <EditIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete" >
+                            <IconButton aria-label="Delete">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
                 </div>
+                ) : (
+                    <div>
+                        <Tooltip title="Delete" >
+                            <IconButton aria-label="Delete">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
                 
-            ) : (
-                <div style={{width:"100%", display:'flex', marginTop: '25px'}}>
-                    <Typography variant="h6" id="tableTitle" style={{flex:'1 0 auto'}}> 
-                        Task list
-                    </Typography>
-                    <TextField
-                        id="outlined-search"
-                        label="Search field"
-                        type="search"
-                        style={{width: '30%'}}
-                        variant="outlined"
-                        fullWidth
-                    />
-                </div>
-            )}
-        </Toolbar>
-        </React.Fragment>
-    );
-};
-
-EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired
-};
-
-EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
+                )}  
+        </div>
+        }else{
+            return false
+        }
+    }
+    render(){
+        const { numSelected } = this.props;
+        return (
+            <Toolbar style={{width:'100%', padding: 0}}>
+                {numSelected ? ( 
+                    this.renderToolBar(numSelected) 
+                ) : ( <div style={{width:"100%", display:'flex', alignItems:'center',paddingTop:'8px'}}>
+                        <Typography variant="h6" id="tableTitle" style={{flex:'1 0 auto', paddingLeft: '20px'}}> 
+                            Task list
+                        </Typography>
+                        <TextField
+                            id="outlined-search"
+                            label="Search field"
+                            type="filter"
+                            style={{width: '20%', paddingRight:'20px'}}
+                            variant="outlined"
+                            fullWidth
+                        />
+                    </div>
+                )}
+            </Toolbar>
+        );
+            }
+}
 
 const styles = theme => ({
     root: {
@@ -206,45 +142,54 @@ const styles = theme => ({
     }
 });
 
-/*
-    Structure:
-
-    id                    number
-    Short description     string
-    Description           string
-    Type                  string
-    Complexity            string
-
-*/
+let data = [
+    {
+        id:111,
+        shortDescription:'Reverse number',
+        description:'Write a JavaScript function that reverse a number.', 
+        type:'JS',
+        complexity:'★'},
+    {
+        id:222,
+        shortDescription:'Reverse number',
+        description:'Write a JavaScript function that reverse a number.', 
+        type:'JS',
+        complexity:'★★',
+    },
+    {
+        id:333,
+        shortDescription:'Reverse number',
+        description:'Write a JavaScript function that reverse a number.', 
+        type: 'JS',
+        complexity:'★★★',
+    },
+    {
+        id:444,
+        shortDescription:'Reverse number',
+        description:'Write a JavaScript function that reverse a number.', 
+        type:'JS',
+        complexity:'★'},
+    {
+        id:555,
+        shortDescription:'Reverse number',
+        description:'Write a JavaScript function that reverse a number.', 
+        type:'JS',
+        complexity:'★★',
+    },
+    {
+        id:666,
+        shortDescription:'Reverse number',
+        description:'Write a JavaScript function that reverse a number.', 
+        type: 'JS',
+        complexity:'★★★',
+    }
+]
 
 class TaskList extends React.Component {
     state = {
         order: "asc",
-        orderBy: "createAt",
+        orderBy: "",
         selected: [],
-        data: [
-        createData(
-            111,
-            'Reverse number',
-            'Write a JavaScript function that reverse a number.',
-            'JS',
-            '★',
-        ),
-        createData(
-            222,
-            'Reverse number',
-            'Write a JavaScript function that reverse a number.',
-            'JS',
-            '★★',
-        ),
-        createData(
-            333,
-            'Reverse number',
-            'Write a JavaScript function that reverse a number.',
-            'JS',
-            '★★★',
-        )
-        ],
         page: 0,
         rowsPerPage: 5
     };
@@ -256,43 +201,30 @@ class TaskList extends React.Component {
         this.setState({data: getData})
     }
 
-    handleRequestSort = (event, property) => {
-        const orderBy = property;
-        let order = "desc";
-
-        if (this.state.orderBy === property && this.state.order === "desc") {
-        order = "asc";
-        }
-
+    handleRequestSort = (event, orderBy) => {
+        let order;
+        this.state.orderBy === orderBy && this.state.order === "desc" ? order = "asc" : order = "desc";
         this.setState({ order, orderBy });
     };
 
     handleSelectAllClick = event => {
-        if (event.target.checked) {
-        this.setState(state => ({ selected: state.data.map(n => n.id) }));
-        return;
-        }
-        this.setState({ selected: [] });
+        event.target.checked ? this.setState({selected: data.map(item => item.id) }) : this.setState({ selected: [] })
     };
 
     handleClick = (event, id) => {
         const { selected } = this.state;
         const selectedIndex = selected.indexOf(id);
         let newSelected = [];
-
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-            selected.slice(0, selectedIndex),
-            selected.slice(selectedIndex + 1)
-            );
+        if(selectedIndex > 0){
+            newSelected = newSelected.concat(selected.slice(0, selectedIndex),selected.slice(selectedIndex + 1))
+        }else{
+            switch(selectedIndex){
+                case -1: newSelected = newSelected.concat(selected, id);break;
+                case 0: newSelected =  newSelected = newSelected.concat(selected.slice(1));break;
+                case (selected.length - 1):  newSelected = newSelected.concat(selected.slice(0, -1));break;
+                default : break;
+            }
         }
-
         this.setState({ selected: newSelected });
     };
 
@@ -308,15 +240,15 @@ class TaskList extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
-        const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+        const { order, orderBy, selected, rowsPerPage, page } = this.state;
 
         return (
         <Paper className={classes.root}>
             <EnhancedTableToolbar numSelected={selected.length} />
             <div className={classes.tableWrapper}>
             <Table className={classes.table} aria-labelledby="tableTitle">
-                <EnhancedTableHead
+                <TabsBar
+                    items ={items}
                     numSelected={selected.length}
                     order={order}
                     orderBy={orderBy}
@@ -327,55 +259,31 @@ class TaskList extends React.Component {
                 <TableBody>
                     {stableSort(data, getSorting(order, orderBy))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map(n => {
-                    const isSelected = this.isSelected(n.id);
-                    return (
-                        <TableRow
-                        hover
-                        onClick={event => this.handleClick(event, n.id)}
-                        role="checkbox"
-                        aria-checked={isSelected}
-                        tabIndex={-1}
-                        key={n.id}
-                        selected={isSelected}
-                        >
-                        <TableCell padding="checkbox">
-                            <Checkbox checked={isSelected} />
-                        </TableCell>
-                        <TableCell align="center" component="th" scope="row" padding="none">
-                            {n.id}
-                        </TableCell>
-                        <TableCell align="center">{n.shortDescription}</TableCell>
-                        <TableCell align="center">{n.description}</TableCell>
-                        <TableCell align="center">{n.type}</TableCell>
-                        <TableCell align="center">{n.complexity}</TableCell>
-                        <TableCell align="center">
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                style={{margin:'0 10px', borderRadius: '5px'}}
-                                className={classes.button}
-                                onClick={() => this.deleteTask(0)}
-                                >
-                                Delete
-                            </Button>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                className={classes.button}
-                                style={{margin:'0 10px', borderRadius: '5px'}}
-                                >
-                                Edit
-                            </Button>
-                        </TableCell>
-                        </TableRow>
-                    );
+                    .map(item => {
+                        const isSelected = this.isSelected(item.id);
+                        return (
+                            <TableRow
+                                hover
+                                onClick={event => this.handleClick(event, item.id)}
+                                role="checkbox"
+                                aria-checked={isSelected}
+                                tabIndex={-1}
+                                key={item.id}
+                                selected={isSelected}
+                            >
+                                <TableCell padding="checkbox">
+                                    <Checkbox checked={isSelected} />
+                                </TableCell>
+                                <TableCell align="center" component="th" scope="row" padding="none">
+                                    {item.id}
+                                </TableCell>
+                                <TableCell align="center">{item.shortDescription}</TableCell>
+                                <TableCell align="center">{item.description}</TableCell>
+                                <TableCell align="center">{item.type}</TableCell>
+                                <TableCell align="center">{item.complexity}</TableCell>
+                            </TableRow>
+                        );
                     })}
-                {emptyRows > 0 && (
-                    <TableRow style={{ height: 49 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                    </TableRow>
-                )}
                 </TableBody>
             </Table>
             </div>
